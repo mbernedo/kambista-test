@@ -9,13 +9,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
-app.use(function (req, res, next) {
+app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
 });
 
-app.listen(app.get("port"), function () {
+app.listen(app.get("port"), () => {
     console.log("Listo puerto 3000");
 });
 var credenciales = {
@@ -30,19 +30,32 @@ var headers = {
 
 var URLu = "https://api.sandbox.hyperwallet.com/rest/v3/users";
 
-app.post("/users", function (req, res) {
+app.post("/usuario", (req, res) => {
     var rpta = {};
     var data = req.body;
-    console.log(data);
     Request.post({
         "headers": headers,
         "auth": credenciales,
         "url": URLu,
-        "body": JSON.stringify({ data })
+        //json: true,
+        "body": JSON.stringify(data)
     }, (error, response, body) => {
         if (error) {
             res.send(error);
         }
-        res.send(body);
+        res.send(JSON.parse(body));
+    })
+});
+
+app.get("/usuario", (req, res) => {
+    Request.get({
+        "headers": headers,
+        "auth": credenciales,
+        "url": URLu
+    }, (error, response, body) => {
+        if (error) {
+            res.send(error);
+        }
+        res.send(JSON.parse(body));
     })
 })
